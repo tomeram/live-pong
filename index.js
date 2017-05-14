@@ -72,10 +72,20 @@ wss.on('connection', (ws) => {
     });
 });
 
+function broadcastMessage(msg) {
+	wss.clients.forEach((curr) => {
+		curr.send(JSON.stringify(msg));
+	});
+}
+
 function broadcastGame() {
-    wss.clients.forEach((curr) => {
-        curr.send(JSON.stringify(myGame));
-    });
+	broadcastMessage(myGame);
+}
+
+function playSound() {
+	let chord = Math.floor(Math.random() * 14) + 1;
+
+	broadcastMessage({response: 'sound', data: chord});
 }
 
 
@@ -145,15 +155,11 @@ function startGame() {
         }
     });
 
-    player1.speedYSize = 1;
-    player2.speedYSize = 1;
+    player1.speedYSize = 3;
+    player2.speedYSize = 3;
 
     myGame.pieces.push(player1);
     myGame.pieces.push(player2);
-
-    function playerBallCollision(player, ball) {
-
-    }
 
     ball = new component(10, 10, "black", 235, 130, 'ball', (curr) => {
         if (curr.x <= 0) {
@@ -239,16 +245,24 @@ function component(width, height, color, x, y, name, collision) {
         this.speedX *= -1;
         this.moveX();
 
-        if (++this.change % 5 == 0)
-            this.speedXSize++;
+        if (++this.change % 5 == 0) {
+	        this.speedXSize++;
+	        this.speedYSize++;
+        }
+
+	    playSound();
     };
 
     this.changeY = function() {
         this.speedY *= -1;
         this.moveY();
 
-        if (++this.change % 5 == 0)
-            this.speedYSize++;
+        if (++this.change % 5 == 0) {
+	        this.speedXSize++;
+	        this.speedYSize++;
+        }
+
+	    playSound();
     };
 }
 

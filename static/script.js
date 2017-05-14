@@ -1,5 +1,11 @@
 var ws;
 
+var chords = [];
+
+for (var i = 1; i <= 16; i++) {
+	chords[i - 1] = new Audio('/Chords/' + i + '.wav');
+}
+
 function startGame() {
     var loc = window.location, new_uri;
 
@@ -63,6 +69,13 @@ function startGame() {
                 myGameArea.state = json.state;
 
                 break;
+
+	        case 'sound':
+	        	console.log(json);
+	        	// chords[json.data].load();
+		        new Audio('/Chords/' + json.data + '.wav').play();
+	        	// chords[json.data].play();
+	        	break;
         }
 
         updateGameArea();
